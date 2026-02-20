@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RINJANI4D Premium Member</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    background:#f3f6f8;
+    padding:10px;
+}
+.wrapper{
+    width:95%;
+    max-width:480px;
+    text-align:center;
+}
+.brand{
+    margin-bottom:20px;
+}
+.brand h1{
+    font-family:'Playfair Display',serif;
+    font-size:32px;
+    margin:0;
+    background: linear-gradient(90deg,#FBC02D,#FFD54F);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.brand p{
+    margin-top:5px;
+    font-size:14px;
+    color:#FBC02D;
+}
+.card{
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    margin-bottom:20px;
+}
+.card h2{
+    margin-top:0;
+    font-size:20px;
+    color:#FBC02D;
+}
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:12px;
+    border-radius:6px;
+    border:1.5px solid #ccc;
+    font-size:14px;
+}
+.button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    background: linear-gradient(90deg,#FBC02D,#FFD54F);
+    color:#fff;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.2s;
+}
+.button:hover{transform:translateY(-2px);}
+.button:active{transform:scale(0.97);}
+.detail{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:6px;
+    color:#FBC02D;
+}
+.progress-container{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+}
+.progress-bar{
+    height:100%;
+    width:0%;
+    background: linear-gradient(270deg,#FFD54F,#FBC02D,#FFD54F);
+    background-size:400% 400%;
+    animation:shimmer 2s linear infinite;
+}
+@keyframes shimmer{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+.status-text{
+    font-size:13px;
+    margin-top:8px;
+    color:#FBC02D;
+}
+.history-container{
+    max-height:180px;
+    overflow-y:auto;
+    margin-top:12px;
+    border-top:1px solid #ddd;
+    padding-top:8px;
+}
+.history-item{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    padding:5px 0;
+    border-bottom:1px solid #eee;
+}
+.footer{
+    text-align:center;
+    font-size:12px;
+    color:#FBC02D;
+    margin-top:5px;
+}
+.modal{
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    justify-content:center;
+    align-items:center;
+}
+.modal-content{
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+    width:90%;
+    max-width:350px;
+}
+.modal button{
+    margin:5px;
+    padding:10px 14px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+.button-close{background:#ccc;}
+.button-cs{background: linear-gradient(90deg,#FBC02D,#FFD54F); color:#fff;}
+.confetti{
+    position:fixed;
+    pointer-events:none;
+    width:100%;
+    height:100%;
+    top:0; left:0;
+    overflow:hidden;
+    z-index:9999;
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<div class="brand">
+    <h1>RINJANI4D</h1>
+    <p>Premium Member System</p>
+</div>
+
+<!-- Login Screen -->
+<div class="card" id="loginScreen">
+    <h2>Member Login</h2>
+    <input type="text" id="username" placeholder="User ID">
+    <button class="button" onclick="login()">Login</button>
+</div>
+
+<!-- Choice Screen -->
+<div class="card" id="choiceScreen" style="display:none;">
+    <h2>Pilih Bonus</h2>
+    <button class="button" onclick="openFreebet()">Ambil Freebet</button>
+    <button class="button" onclick="openBonus()">Ambil Bonus Deposit</button>
+</div>
+
+<!-- Freebet Screen -->
+<div class="card" id="freebetScreen" style="display:none;">
+    <h2>Freebet 15.000 - 25.000</h2>
+    <input type="text" id="voucherFreebet" placeholder="Masukkan Kode Voucher">
+    <button class="button" id="claimFreebetBtn" onclick="claimFreebet()">Klaim Freebet</button>
+    <button class="button" onclick="backToChoice()">Kembali</button>
+    <div class="progress-container">
+        <div class="progress-bar" id="freebetProgress"></div>
+    </div>
+    <div class="status-text" id="freebetStatus">Status: Menunggu Aktivasi</div>
+    <div class="history-container" id="freebetHistory"></div>
+</div>
+
+<!-- Bonus Deposit Screen -->
+<div class="card" id="bonusScreen" style="display:none;">
+    <h2>Bonus Deposit 100%</h2>
+    <input type="text" id="voucherBonus" placeholder="Masukkan Kode Voucher">
+    <input type="number" id="deposit" placeholder="Masukkan Deposit (min 10.000)" min="10000">
+    <button class="button" id="claimBonusBtn" onclick="claimBonus()">Aktivasi Bonus</button>
+    <button class="button" onclick="backToChoice()">Kembali</button>
+    <div class="progress-container">
+        <div class="progress-bar" id="bonusProgress"></div>
+    </div>
+    <div class="status-text" id="bonusStatus">Status: Menunggu Aktivasi</div>
+    <div class="history-container" id="bonusHistory"></div>
+</div>
+
+<div class="footer">© 2026 RINJANI4D</div>
+</div>
+
+<!-- Modal -->
+<div id="popupModal" class="modal">
+    <div class="modal-content">
+        <h2>Selamat!</h2>
+        <p id="modalMessage"></p>
+        <p>Silakan screenshot & hubungi CS untuk aktivasi.</p>
+        <button class="button-close" onclick="closeModal()">Tutup</button>
+        <button class="button-cs" onclick="window.open('https://rinjanipuncak.com/')">Hubungi CS</button>
+    </div>
+</div>
+
+<div class="confetti" id="confettiContainer"></div>
+
+<script>
+let currentUser="";
+let freebetHistory=[], bonusHistory=[];
+const names = ["asen154","bayu54","aguss45","doni21","sari12","nina33","farhan77","yoga88","putri56","dian23","fajar90","rahma11","andika34","rudi99","tania07","miswan22","mika18","agus45","zaki66","rio77","sinta88"];
+
+function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function roundToThousand(n){return Math.floor(n/1000)*1000;}
+function generateHistory(type){
+    const historyArr = type==="freebet"?freebetHistory:bonusHistory;
+    historyArr.length=0;
+    for(let i=0;i<20;i++){
+        let user = names[Math.floor(Math.random()*names.length)];
+        let value = type==="freebet"?roundToThousand(randomInt(15000,25000)):roundToThousand(randomInt(10000,1000000));
+        historyArr.push({user,value});
+    }
+}
+function showScreen(screenId){
+    ["loginScreen","choiceScreen","freebetScreen","bonusScreen"].forEach(id=>document.getElementById(id).style.display="none");
+    document.getElementById(screenId).style.display="block";
+}
+function login(){
+    const username = document.getElementById("username").value.trim();
+    if(!username){ alert("Silakan isi User ID"); return;}
+    currentUser=username;
+    showScreen("choiceScreen");
+}
+function backToChoice(){showScreen("choiceScreen");}
+
+// Freebet
+function openFreebet(){
+    generateHistory("freebet");
+    renderHistory("freebet");
+    checkDailyLimit("freebet");
+    showScreen("freebetScreen");
+}
+function claimFreebet(){
+    const voucher = document.getElementById("voucherFreebet").value.trim();
+    if(voucher!=="MAXWIN200JT"){ alert("Kode voucher salah"); return;}
+    const today = new Date().toISOString().split('T')[0];
+    let storage = JSON.parse(localStorage.getItem("freebetLimit")||"{}");
+    if(storage[currentUser]===today){ alert("Sudah klaim freebet hari ini"); return;}
+    storage[currentUser]=today;
+    localStorage.setItem("freebetLimit",JSON.stringify(storage));
+    animateProgress("freebetProgress",()=>{
+        const amount = roundToThousand(randomInt(15000,25000));
+        document.getElementById("freebetStatus").innerText="Freebet Aktif!";
+        showModal(`Freebet: IDR ${amount.toLocaleString('id-ID')}`);
+        generateHistory("freebet");
+        renderHistory("freebet");
+        confettiEffect();
+    });
+}
+
+// Bonus Deposit
+function openBonus(){
+    generateHistory("bonus");
+    renderHistory("bonus");
+    checkDailyLimit("bonus");
+    showScreen("bonusScreen");
+}
+function claimBonus(){
+    const voucher = document.getElementById("voucherBonus").value.trim();
+    if(voucher!=="MAXWIN200JT"){ alert("Kode voucher salah"); return;}
+    let deposit = parseInt(document.getElementById("deposit").value);
+    if(!deposit || deposit<10000){ alert("Minimal deposit 10.000"); return;}
+    if(deposit>1000000){ alert("Maksimal deposit 1.000.000"); return;}
+    deposit = roundToThousand(deposit);
+    const today = new Date().toISOString().split('T')[0];
+    let storage = JSON.parse(localStorage.getItem("bonusLimit")||"{}");
+    if(storage[currentUser]===today){ alert("Sudah klaim bonus hari ini"); return;}
+    storage[currentUser]=today;
+    localStorage.setItem("bonusLimit",JSON.stringify(storage));
+    let bonus = deposit;
+    let turnover = deposit<=50000?"0x":(deposit<=200000?"1x":"2x");
+    animateProgress("bonusProgress",()=>{
+        document.getElementById("bonusStatus").innerText="Bonus Aktif!";
+        showModal(`Deposit: IDR ${deposit.toLocaleString('id-ID')}<br>Bonus: IDR ${bonus.toLocaleString('id-ID')}<br>Turnover: ${turnover}`);
+        generateHistory("bonus");
+        renderHistory("bonus");
+        confettiEffect();
+    });
+}
+
+function checkDailyLimit(type){
+    const today = new Date().toISOString().split('T')[0];
+    let storage = JSON.parse(localStorage.getItem(type==="freebet"?"freebetLimit":"bonusLimit")||"{}");
+    const btn = document.getElementById(type==="freebet"?"claimFreebetBtn":"claimBonusBtn");
+    btn.disabled = storage[currentUser]===today;
+}
+
+function renderHistory(type){
+    const container = document.getElementById(type==="freebet"?"freebetHistory":"bonusHistory");
+    const historyArr = type==="freebet"?freebetHistory:bonusHistory;
+    container.innerHTML="";
+    historyArr.forEach(h=>{
+        let div=document.createElement("div");
+        div.className="history-item";
+        div.innerHTML=`<span>${h.user}</span><span>IDR ${h.value.toLocaleString('id-ID')}</span>`;
+        container.appendChild(div);
+    });
+}
+
+function showModal(msg){
+    document.getElementById("modalMessage").innerHTML=msg;
+    document.getElementById("popupModal").style.display="flex";
+}
+function closeModal(){document.getElementById("popupModal").style.display="none";}
+
+function animateProgress(id,callback){
+    const bar=document.getElementById(id);
+    bar.style.width="0%";
+    let width=0;
+    let interval=setInterval(()=>{
+        width+=3;
+        bar.style.width=width+"%";
+        if(width>=100){
+            clearInterval(interval);
+            callback();
+        }
+    },30);
+}
+
+function confettiEffect(){
+    const container = document.getElementById("confettiContainer");
+    container.innerHTML="";
+    for(let i=0;i<80;i++){
+        let div=document.createElement("div");
+        div.style.position="absolute";
+        div.style.width="8px";
+        div.style.height="8px";
+        div.style.backgroundColor=["#FBC02D","#FFD54F","#FFF176"][Math.floor(Math.random()*3)];
+        div.style.left=Math.random()*window.innerWidth+"px";
+        div.style.top="-10px";
+        div.style.opacity=Math.random();
+        div.style.transform = "rotate("+Math.random()*360+"deg)";
+        div.style.animation = `fall${i} 2s linear forwards`;
+        container.appendChild(div);
+        const style = document.createElement("style");
+        style.innerHTML = `
+        @keyframes fall${i}{
+            to {top:100vh; transform: rotate(${Math.random()*720}deg);}
+        }`;
+        document.head.appendChild(style);
+    }
+}
+</script>
+</body>
+</html>
